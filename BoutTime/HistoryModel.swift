@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import GameKit
+
 
 class HistoryEvent: Comparable {
 	let year: Int
@@ -57,4 +59,18 @@ struct HistoryModel {
 		HistoryEvent(year: 2000, event: "2000", infoUrl: "https://teamtreehouse.com/"),
 		HistoryEvent(year: 2016, event: "2016 - the UK voted to leave the EU", infoUrl: "https://teamtreehouse.com/"),
 	]
+	
+	func shuffledEventArrayOf(thisNumberOfEvents eventCount: Int) -> [HistoryEvent]? {
+		
+		let eventCount = min(eventCount, events.count)
+		
+		//Shuffle events
+		guard let randomOrderedEvents = GKRandomSource.sharedRandom().arrayByShufflingObjectsInArray(events) as? [HistoryEvent] where eventCount > 0 else {
+			
+			return nil
+		}
+		
+		//return a HistoryEvent-cast slice of eventCount events (particulary, 4)
+		return [HistoryEvent](randomOrderedEvents[0..<eventCount])
+	}
 }
