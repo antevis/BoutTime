@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 	
 	@IBOutlet weak var eventStack: UIStackView!
 	
+	var eventsPerRound: Int = 4
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -96,7 +97,7 @@ class ViewController: UIViewController {
 		
 		view.backgroundColor = color
 		view.tag = tag
-		view.layer.cornerRadius = 10
+		view.layer.cornerRadius = 8
 		
 		
 		let insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -120,23 +121,111 @@ class ViewController: UIViewController {
 		label.leadingAnchor.constraintEqualToAnchor(marginGuide.leadingAnchor, constant: 20).active = true
 		label.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
 		
+		if tag == 0 {
+			
+			let normalStateImage = UIImage(named: "down_full")
+			let hStateImage = UIImage(named: "down_full_selected")
+			
+			let button = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			
+			var ratio: CGFloat = 1.0
+			
+			if let img = normalStateImage {
+				
+				ratio = img.size.width / img.size.height
+			}
+			
+			setConstraintsForFull(button, relativeTo: view, ratio: ratio)
+			
+		} else if tag == eventsPerRound - 1 {
+			
+			let normalStateImage = UIImage(named: "up_full")
+			let hStateImage = UIImage(named: "up_full_selected")
+			
+			let button = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			
+			var ratio: CGFloat = 1.0
+			
+			if let img = normalStateImage {
+				
+				ratio = img.size.width / img.size.height
+			}
+			
+			setConstraintsForFull(button, relativeTo: view, ratio: ratio)
+			
+		} else {
+			
+			//add 2 buttons
+			
+			var normalStateImage = UIImage(named: "up_half")
+			var hStateImage = UIImage(named: "up_half_selected")
+			
+			let buttonUp = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			
+			var ratio: CGFloat = 1.0
+			
+			if let img = normalStateImage {
+				
+				ratio = img.size.width / img.size.height
+			}
+			
+			setConstraintsForUpperHalf(buttonUp, relativeTo: view, ratio: ratio)
+			
+			
+			normalStateImage = UIImage(named: "down_half")
+			hStateImage = UIImage(named: "down_half_selected")
+			
+			let buttonDown = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			
+			ratio = 1.0
+			
+			if let img = normalStateImage {
+				
+				ratio = img.size.width / img.size.height
+			}
+			
+			setConstraintsForLowerHalf(buttonDown, relativeTo: view, ratio: ratio)
+			
+		}
+
 		
-		//=====Button
+	}
+	
+	func addSingleButton(toView parentView: UIView, normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> UIButton {
+		
+		//let marginGuide = parentView.layoutMarginsGuide
+		
 		let button = UIButton()
 		
-		var ratio: CGFloat = 1.0
+		//var ratio: CGFloat = 1.0
 		
-		if let image = UIImage(named: "down_full") {
+		if let image = normalStateImage {
 			
-			ratio = image.size.width / image.size.height
+			//ratio = image.size.width / image.size.height
 			
 			button.setImage(image, forState: .Normal)
 		}
+		
+		if let image = highlightedStateImage {
+			
+			button.setImage(image, forState: .Highlighted)
+		}
+		
+		parentView.addSubview(button)
+		
+		return button
+		
+//		button.translatesAutoresizingMaskIntoConstraints = false
+//		
+//		button.trailingAnchor.constraintEqualToAnchor(marginGuide.trailingAnchor,constant: 0).active = true
+//		button.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
+//		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor).active = true
+//		button.widthAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: ratio).active = true
+	}
 	
+	func setConstraintsForFull(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
 		
-		button.setImage(UIImage(named: "down_full_selected"), forState: .Highlighted)
-		
-		view.addSubview(button)
+		let marginGuide = parentView.layoutMarginsGuide
 		
 		button.translatesAutoresizingMaskIntoConstraints = false
 		
@@ -144,15 +233,37 @@ class ViewController: UIViewController {
 		button.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
 		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor).active = true
 		button.widthAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: ratio).active = true
-
+	}
+	
+	func  setConstraintsForUpperHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
 		
+		let marginGuide = parentView.layoutMarginsGuide
+		
+		button.translatesAutoresizingMaskIntoConstraints = false
+		
+		button.trailingAnchor.constraintEqualToAnchor(marginGuide.trailingAnchor,constant: 0).active = true
+		button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 0).active = true
+		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: 0.5, constant: 0).active = true
+		button.widthAnchor.constraintEqualToAnchor(button.heightAnchor, multiplier: ratio).active = true
+	}
+	
+	func  setConstraintsForLowerHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
+		
+		let marginGuide = parentView.layoutMarginsGuide
+		
+		button.translatesAutoresizingMaskIntoConstraints = false
+		
+		button.trailingAnchor.constraintEqualToAnchor(marginGuide.trailingAnchor,constant: 0).active = true
+		button.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: 0).active = true
+		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: 0.5, constant: 0).active = true
+		button.widthAnchor.constraintEqualToAnchor(button.heightAnchor, multiplier: ratio).active = true
 	}
 
 
 	
 	@IBAction func addAction(sender: AnyObject) {
 		
-		for i in 0...3 {
+		for i in 0..<eventsPerRound {
 
 			//addButtonTo(stack: eventStack, text: "Option \(i+1)", tag: i, color: UIColor.blueColor())
 			
