@@ -22,18 +22,6 @@ class ViewController: UIViewController {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
 		
-//		view0.clipsToBounds = true
-//		view0.layer.cornerRadius = 64
-//		
-//		view1.clipsToBounds = true
-//		view1.layer.cornerRadius = 64
-//		
-//		view2.clipsToBounds = true
-//		view2.layer.cornerRadius = 64
-//		
-//		view3.clipsToBounds = true
-//		view3.layer.cornerRadius = 64
-		
 		let views = [view0, view1, view2, view2, view3]
 		
 		for subView in views {
