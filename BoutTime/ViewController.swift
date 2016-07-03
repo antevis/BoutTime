@@ -13,7 +13,10 @@ class ViewController: UIViewController {
 	@IBOutlet var superView: UIView!
 	
 	@IBOutlet weak var eventStack: UIStackView!
-	@IBOutlet weak var testlabel: UILabel!
+	@IBOutlet weak var timerlabel: UILabel!
+	@IBOutlet weak var infoLabel: UILabel!
+	@IBOutlet weak var contrainerView: UIView!
+	
 	
 	var eventsPerRound: Int = 4
 	
@@ -22,6 +25,11 @@ class ViewController: UIViewController {
 	var eventSet: [HistoryEvent]?
 	
 	var buttonTag: Int = 0
+	
+	var timer = NSTimer()
+	var seconds: Int = 60
+	var score: Int = 0
+	
 	
 	enum arrowFileNames: String {
 		
@@ -41,7 +49,6 @@ class ViewController: UIViewController {
 		
 		newRound()
 		
-		testlabel.text = "sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrde"
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -51,9 +58,42 @@ class ViewController: UIViewController {
 
 	func newRound() {
 		
+		score = 0
+		
+		timer.invalidate()
+		
+		seconds = 60
+		timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
+		timerlabel.hidden = false
+		
+		removeViews(ofType: UIView.self, from: eventStack)
+		removeViews(ofType: UIButton.self, from: contrainerView)
+		
+		infoLabel.text = "Shake to complete"
+		
 		eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
 		
 		addEventTiles(eventSet)
+		
+		timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(decreaseTimer), userInfo: nil, repeats: true)
+	}
+	
+	func decreaseTimer() {
+		
+		seconds -= 1
+		timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
+		
+		if seconds == 0 {
+			
+			if let eventSet = eventSet {
+				
+				checkRoundResluts(eventSet)
+			} else {
+				
+				//just trying again
+				newRound()
+			}
+		}
 	}
 	
 	
@@ -299,6 +339,66 @@ class ViewController: UIViewController {
 			
 			addViewTo(stack: eventStack, text: eventSet[i].event, color: UIColor.whiteColor(), tag: i)
 		}
+	}
+	
+	override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+		
+		if motion == .MotionShake {
+			
+			//newRound()
+			
+			if let eventSet = eventSet {
+			
+				checkRoundResluts(eventSet)
+			} else {
+				
+				//just trying again
+				newRound()
+			}
+		}
+	}
+	
+	func checkRoundResluts(historyEventSet: [HistoryEvent]) {
+		
+		let sortedSet = historyEventSet.sort()
+		
+		timerlabel.hidden = true
+		
+		var image: UIImage?
+		
+		if sortedSet == historyEventSet {
+			
+			image = UIImage(named: "next_round_success")
+			
+			score += 1
+			
+		} else {
+			
+			image = UIImage(named: "next_round_fail")
+		}
+		
+		let button = addButton(toView: contrainerView, normalStateImage: image, highlightedStateImage: image)
+		
+		let ratio = button.ratio
+		
+		let marginGuide = contrainerView.layoutMarginsGuide
+		
+		button.button.translatesAutoresizingMaskIntoConstraints = false
+		
+		button.button.centerXAnchor.constraintEqualToAnchor(marginGuide.centerXAnchor).active = true
+		button.button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 8).active = true
+		button.button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, constant: 0).active = true
+		button.button.widthAnchor.constraintEqualToAnchor(button.button.heightAnchor, multiplier: ratio).active = true
+		
+		//button.button.hidden = false
+		
+		view.bringSubviewToFront(button.button)
+		
+		infoLabel.text = "Tap events to learm more"
+		
+		button.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
+		
+		button.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
 	}
 	
 }
