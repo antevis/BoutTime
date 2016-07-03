@@ -29,7 +29,9 @@ class ViewController: UIViewController {
 	var timer = NSTimer()
 	var seconds: Int = 60
 	var score: Int = 0
-	
+	var round: Int = 0
+	let maxRounds: Int = 2
+	var roundInProgress: Bool = false
 	
 	enum arrowFileNames: String {
 		
@@ -58,24 +60,42 @@ class ViewController: UIViewController {
 
 	func newRound() {
 		
-		score = 0
+		if round == maxRounds {
+			
+			//gameover
+			
+			print("gameover: \(score):\(maxRounds)")
+			
+			if let resultController = storyboard?.instantiateViewControllerWithIdentifier("gameOverController") as? GameOverController {
+				
+				presentViewController(resultController, animated: true, completion: nil)
+				
+				resultController.gameOverLabel.text = "\(score)/\(maxRounds)"
+			}
+			
+		} else {
+			
+			roundInProgress = true
 		
-		timer.invalidate()
-		
-		seconds = 60
-		timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
-		timerlabel.hidden = false
-		
-		removeViews(ofType: UIView.self, from: eventStack)
-		removeViews(ofType: UIButton.self, from: contrainerView)
-		
-		infoLabel.text = "Shake to complete"
-		
-		eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
-		
-		addEventTiles(eventSet)
-		
-		timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(decreaseTimer), userInfo: nil, repeats: true)
+			round += 1
+			
+			timer.invalidate()
+			
+			seconds = 60
+			timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
+			timerlabel.hidden = false
+			
+			removeViews(ofType: UIView.self, from: eventStack)
+			removeViews(ofType: UIButton.self, from: contrainerView)
+			
+			infoLabel.text = "Shake to complete"
+			
+			eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
+			
+			addEventTiles(eventSet)
+			
+			timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(decreaseTimer), userInfo: nil, repeats: true)
+		}
 	}
 	
 	func decreaseTimer() {
@@ -343,7 +363,7 @@ class ViewController: UIViewController {
 	
 	override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
 		
-		if motion == .MotionShake {
+		if motion == .MotionShake && roundInProgress {
 			
 			//newRound()
 			
@@ -359,6 +379,8 @@ class ViewController: UIViewController {
 	}
 	
 	func checkRoundResluts(historyEventSet: [HistoryEvent]) {
+		
+		roundInProgress = false
 		
 		let sortedSet = historyEventSet.sort()
 		

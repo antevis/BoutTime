@@ -4,7 +4,9 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -87,18 +89,18 @@
                                 <exclude reference="IfM-ft-jsw"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="eQT-Zn-zBH"/>
-                                <exclude reference="ha9-m0-tf4"/>
-                                <exclude reference="hf7-gq-b3j"/>
-                                <exclude reference="96n-cc-1pu"/>
-                                <exclude reference="NyE-o2-Dks"/>
-                                <exclude reference="RNt-kS-Wsk"/>
-                                <exclude reference="EnD-yz-o2O"/>
-                                <exclude reference="Pq5-W4-Yml"/>
-                                <exclude reference="k9i-hr-P4E"/>
                                 <exclude reference="kGb-aq-5Ih"/>
                                 <exclude reference="mUe-49-jih"/>
                                 <exclude reference="t9K-8z-4Gh"/>
+                                <exclude reference="EnD-yz-o2O"/>
+                                <exclude reference="Pq5-W4-Yml"/>
+                                <exclude reference="k9i-hr-P4E"/>
+                                <exclude reference="96n-cc-1pu"/>
+                                <exclude reference="NyE-o2-Dks"/>
+                                <exclude reference="RNt-kS-Wsk"/>
+                                <exclude reference="eQT-Zn-zBH"/>
+                                <exclude reference="ha9-m0-tf4"/>
+                                <exclude reference="hf7-gq-b3j"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -108,18 +110,18 @@
                                 <include reference="IfM-ft-jsw"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="eQT-Zn-zBH"/>
-                                <include reference="ha9-m0-tf4"/>
-                                <include reference="hf7-gq-b3j"/>
-                                <include reference="96n-cc-1pu"/>
-                                <include reference="NyE-o2-Dks"/>
-                                <include reference="RNt-kS-Wsk"/>
-                                <exclude reference="EnD-yz-o2O"/>
-                                <exclude reference="Pq5-W4-Yml"/>
-                                <include reference="k9i-hr-P4E"/>
                                 <include reference="kGb-aq-5Ih"/>
                                 <include reference="mUe-49-jih"/>
                                 <include reference="t9K-8z-4Gh"/>
+                                <exclude reference="EnD-yz-o2O"/>
+                                <exclude reference="Pq5-W4-Yml"/>
+                                <include reference="k9i-hr-P4E"/>
+                                <include reference="96n-cc-1pu"/>
+                                <include reference="NyE-o2-Dks"/>
+                                <include reference="RNt-kS-Wsk"/>
+                                <include reference="eQT-Zn-zBH"/>
+                                <include reference="ha9-m0-tf4"/>
+                                <include reference="hf7-gq-b3j"/>
                             </mask>
                         </variation>
                     </view>
@@ -136,5 +138,123 @@
             </objects>
             <point key="canvasLocation" x="426.75" y="457.125"/>
         </scene>
+        <!--Game Over Controller-->
+        <scene sceneID="lLX-Zs-ene">
+            <objects>
+                <viewController storyboardIdentifier="gameOverController" id="AHM-XB-QOU" customClass="GameOverController" customModule="BoutTime" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1HL-Xk-jkn"/>
+                        <viewControllerLayoutGuide type="bottom" id="uh8-3A-nUb"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="fCf-J2-XIl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Score" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KoO-mo-aiV">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
+                                <color key="textColor" red="0.16470588235294117" green="0.49019607843137253" blue="0.65098039215686276" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4/6" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7AZ-IE-TjT">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="55"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rwN-8B-Kst">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="rwN-8B-Kst" secondAttribute="height" multiplier="450:142" id="3s8-eU-6W0"/>
+                                </constraints>
+                                <state key="normal" title="Button" image="play_again"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="3s8-eU-6W0"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="3s8-eU-6W0"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <action selector="playAgainAction:" destination="AHM-XB-QOU" eventType="touchUpInside" id="zln-8p-xdB"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M3J-T8-9ZJ">
+                                <rect key="frame" x="20" y="20" width="504" height="142"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="M3J-T8-9ZJ" secondAttribute="height" multiplier="252:71" id="ovS-2Y-dO4"/>
+                                </constraints>
+                                <state key="normal" title="Button" image="play_again"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="ovS-2Y-dO4"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="ovS-2Y-dO4"/>
+                                    </mask>
+                                </variation>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.1176470588" blue="0.2274509804" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="KoO-mo-aiV" firstAttribute="top" secondItem="1HL-Xk-jkn" secondAttribute="bottom" constant="181" id="2MN-n5-Xx0"/>
+                            <constraint firstItem="rwN-8B-Kst" firstAttribute="width" secondItem="fCf-J2-XIl" secondAttribute="width" multiplier="0.4" id="OL0-5F-sFV"/>
+                            <constraint firstItem="7AZ-IE-TjT" firstAttribute="centerX" secondItem="fCf-J2-XIl" secondAttribute="centerX" id="Zqu-Ok-oZm"/>
+                            <constraint firstItem="KoO-mo-aiV" firstAttribute="centerX" secondItem="fCf-J2-XIl" secondAttribute="centerX" id="alu-8J-vIH"/>
+                            <constraint firstItem="7AZ-IE-TjT" firstAttribute="top" secondItem="KoO-mo-aiV" secondAttribute="bottom" constant="2" id="jaf-Fk-H16"/>
+                            <constraint firstItem="rwN-8B-Kst" firstAttribute="centerX" secondItem="fCf-J2-XIl" secondAttribute="centerX" id="p9O-P7-AlI"/>
+                            <constraint firstItem="rwN-8B-Kst" firstAttribute="top" secondItem="7AZ-IE-TjT" secondAttribute="bottom" constant="70" id="rbr-Pc-zgu"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="KoO-mo-aiV"/>
+                                <exclude reference="7AZ-IE-TjT"/>
+                                <exclude reference="rwN-8B-Kst"/>
+                                <exclude reference="M3J-T8-9ZJ"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="OL0-5F-sFV"/>
+                                <exclude reference="p9O-P7-AlI"/>
+                                <exclude reference="rbr-Pc-zgu"/>
+                                <exclude reference="Zqu-Ok-oZm"/>
+                                <exclude reference="jaf-Fk-H16"/>
+                                <exclude reference="2MN-n5-Xx0"/>
+                                <exclude reference="alu-8J-vIH"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="KoO-mo-aiV"/>
+                                <include reference="7AZ-IE-TjT"/>
+                                <include reference="rwN-8B-Kst"/>
+                                <exclude reference="M3J-T8-9ZJ"/>
+                            </mask>
+                            <mask key="constraints">
+                                <include reference="OL0-5F-sFV"/>
+                                <include reference="p9O-P7-AlI"/>
+                                <include reference="rbr-Pc-zgu"/>
+                                <include reference="Zqu-Ok-oZm"/>
+                                <include reference="jaf-Fk-H16"/>
+                                <include reference="2MN-n5-Xx0"/>
+                                <include reference="alu-8J-vIH"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="gameOverLabel" destination="7AZ-IE-TjT" id="oha-Kh-5KF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5WN-h5-4xC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1093.5" y="445.5"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="play_again" width="450" height="142"/>
+    </resources>
 </document>
