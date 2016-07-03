@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -21,23 +22,19 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="xl2-Xd-qOH">
                                 <rect key="frame" x="0.0" y="0.0" width="110" height="200"/>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="1" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ahb-Yv-hct">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lable" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.01" translatesAutoresizingMaskIntoConstraints="NO" id="ahb-Yv-hct">
                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.1176470588" blue="0.2274509804" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ahb-Yv-hct" secondAttribute="bottom" constant="8" id="4wT-Fj-90L"/>
-                            <constraint firstItem="ahb-Yv-hct" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="560" id="A5O-xo-5c2"/>
                             <constraint firstItem="xl2-Xd-qOH" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="eQT-Zn-zBH"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="ahb-Yv-hct" secondAttribute="trailing" constant="8" id="gA5-oR-ZTH"/>
                             <constraint firstItem="xl2-Xd-qOH" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="ha9-m0-tf4"/>
                             <constraint firstItem="xl2-Xd-qOH" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hf7-gq-b3j"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="xl2-Xd-qOH" secondAttribute="bottom" constant="100" id="t9K-8z-4Gh"/>
-                            <constraint firstItem="ahb-Yv-hct" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="uL1-W3-sLr"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -45,30 +42,22 @@
                                 <exclude reference="ahb-Yv-hct"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="t9K-8z-4Gh"/>
                                 <exclude reference="eQT-Zn-zBH"/>
                                 <exclude reference="ha9-m0-tf4"/>
                                 <exclude reference="hf7-gq-b3j"/>
-                                <exclude reference="A5O-xo-5c2"/>
-                                <exclude reference="gA5-oR-ZTH"/>
-                                <exclude reference="uL1-W3-sLr"/>
-                                <exclude reference="4wT-Fj-90L"/>
-                                <exclude reference="t9K-8z-4Gh"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
                             <mask key="subviews">
                                 <include reference="xl2-Xd-qOH"/>
-                                <include reference="ahb-Yv-hct"/>
+                                <exclude reference="ahb-Yv-hct"/>
                             </mask>
                             <mask key="constraints">
+                                <include reference="t9K-8z-4Gh"/>
                                 <include reference="eQT-Zn-zBH"/>
                                 <include reference="ha9-m0-tf4"/>
                                 <include reference="hf7-gq-b3j"/>
-                                <include reference="A5O-xo-5c2"/>
-                                <include reference="gA5-oR-ZTH"/>
-                                <include reference="uL1-W3-sLr"/>
-                                <include reference="4wT-Fj-90L"/>
-                                <include reference="t9K-8z-4Gh"/>
                             </mask>
                         </variation>
                     </view>

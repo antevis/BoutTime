@@ -19,6 +19,10 @@ class ViewController: UIViewController {
 	
 	let history = HistoryModel()
 	
+	var eventSet: [HistoryEvent]?
+	
+	var buttonTag: Int = 0
+	
 	enum arrowFileNames: String {
 		
 		case downFull = "down_full"
@@ -47,7 +51,7 @@ class ViewController: UIViewController {
 
 	func newRound() {
 		
-		let eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
+		eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
 		
 		addEventTiles(eventSet)
 	}
@@ -78,14 +82,14 @@ class ViewController: UIViewController {
 		stackView.addArrangedSubview(button)
 	}
 	
-	func addViewTo(stack stackView: UIStackView, text: String, tag: Int, color: UIColor) {
+	func addViewTo(stack stackView: UIStackView, text: String, color: UIColor, tag: Int) {
 		
 		let view = UIView()
 		
 		view.clipsToBounds = true
 		
 		view.backgroundColor = color
-		view.tag = tag
+		view.tag = tag + 100
 		view.layer.cornerRadius = 8
 		
 		
@@ -110,52 +114,49 @@ class ViewController: UIViewController {
 			let normalStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFull.rawValue) : UIImage(named: arrowFileNames.upFull.rawValue)
 			let hStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFullSelected.rawValue) : UIImage(named: arrowFileNames.upFullSelected.rawValue)
 			
-			let buttonTuple = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttonTuple = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
 			
 			button = buttonTuple.button
 			
-			//One of the rare cases when force-unwrapping justified. IMHO
+			//One of the rare cases when force-unwrapping justified IMHO
 			setConstraintsForFull(button!, relativeTo: view, ratio: buttonTuple.ratio)
+			
 		
 		//all inner tiles
 		} else if tag < lastTag {
 			
-			//add 2 buttons
+			//add 2 buttons:
+			//I
 			var normalStateImage = UIImage(named: arrowFileNames.upHalf.rawValue)
 			var hStateImage = UIImage(named: arrowFileNames.upHalfSelected.rawValue)
 			
-			let buttonUpTuple = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttonUpTuple = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
 			
 			button = buttonUpTuple.button
 			
 			setConstraintsForUpperHalf(button!, relativeTo: view, ratio: buttonUpTuple.ratio)
 			
-			
+			//II
 			normalStateImage = UIImage(named: arrowFileNames.downHalf.rawValue)
 			hStateImage = UIImage(named: arrowFileNames.downHalfSelected.rawValue)
 			
-			let buttonDown = addSingleButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttonDown = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
 			
 			setConstraintsForLowerHalf(buttonDown.button, relativeTo: view, ratio: buttonDown.ratio)
 		}
-		
 		
 		//=====Label
 		let label = UILabel()
 		label.text = text
 		label.textColor = UIColor(red: 17.0 / 255, green: 76.0 / 255, blue: 105.0 / 255, alpha: 1.0)
-		//label.sizeToFit()
-		
-		
-		//label.textAlignment = .Center
-		
+		label.tag = tag + 1000
 		
 		view.addSubview(label)
 		
 		label.translatesAutoresizingMaskIntoConstraints = false
 		
 		label.leadingAnchor.constraintEqualToAnchor(marginGuide.leadingAnchor, constant: 20).active = true
-		//label.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
+		label.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
 		label.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 20).active = true
 		label.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: -20).active = true
 		
@@ -174,16 +175,9 @@ class ViewController: UIViewController {
 		
 		label.numberOfLines = 0
 		label.lineBreakMode = .ByWordWrapping
-		label.adjustsFontSizeToFitWidth = true
-		
-		label.minimumScaleFactor = 0.2
-		
-		label.sizeToFit()
-		
-		
 	}
 	
-	func addSingleButton(toView parentView: UIView, normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
+	func addButton(toView parentView: UIView, normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
 		
 		var ratio: CGFloat = 1.0
 		
@@ -201,9 +195,52 @@ class ViewController: UIViewController {
 			button.setImage(image, forState: .Highlighted)
 		}
 		
+		button.tag = buttonTag
+		
+		button.addTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
+		
+		buttonTag += 1
+		
 		parentView.addSubview(button)
 		
 		return (button: button, ratio: ratio)
+	}
+	
+	func swapElements(sender: UIButton!) {
+		
+		let lhs = sender.tag / 2
+		let rhs = lhs + 1
+		
+		if eventSet != nil {
+			
+			swap(&eventSet![lhs], &eventSet![rhs])
+			
+			let swappees: [Int] = [lhs, rhs]
+			
+			for swappee in swappees {
+				
+				reAssignLabelText(swappee)
+			}
+		}
+	}
+	
+	func setTextFor(tag viewTag: Int, labelCandidate view: UIView) {
+		
+		if view.tag == viewTag + 1000 {
+			
+			if let label = view as? UILabel {
+				
+				label.text = eventSet![viewTag].event
+			}
+		}
+	}
+	
+	func reAssignLabelText (tag: Int) {
+		
+		if let upperTile = eventStack.viewWithTag(tag + 100), let labelCandidate = upperTile.viewWithTag(tag + 1000) {
+			
+			setTextFor(tag: tag, labelCandidate: labelCandidate)
+		}
 	}
 	
 	func setConstraintsForFull(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
@@ -249,17 +286,20 @@ class ViewController: UIViewController {
 	
 	func addEventTiles(eventSet: [HistoryEvent]?) {
 		
+		buttonTag = 0
+		
 		guard let eventSet = eventSet where eventSet.count > 0 else {
 			
-			addViewTo(stack: eventStack, text: "No events found. Shake to try again", tag: 404, color: UIColor(red: 204.0 / 255, green: 102.0 / 255, blue: 1.0, alpha: 1.0))
+			addViewTo(stack: eventStack, text: "No events found. Shake to try again", color: UIColor(red: 204.0 / 255, green: 102.0 / 255, blue: 1.0, alpha: 1.0), tag: 404)
 			
 			return
 		}
 		
 		for i in 0..<eventSet.count {
 			
-			addViewTo(stack: eventStack, text: "\(eventSet[i].event) sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded sdfghgfd fhjhgfd hgfdsdf rgfdvd hfdgffdf ,hukmnhjnbg srdfresf jnbyhgtgf sergfrded", tag: i, color: UIColor.whiteColor())
+			addViewTo(stack: eventStack, text: eventSet[i].event, color: UIColor.whiteColor(), tag: i)
 		}
 	}
+	
 }
 
