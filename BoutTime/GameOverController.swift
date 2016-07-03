@@ -43,7 +43,10 @@ class GameOverController: UIViewController {
 
 	@IBAction func playAgainAction(sender: AnyObject) {
 		
-		
+		if let resultController = storyboard?.instantiateViewControllerWithIdentifier("historyController") {
+			
+			presentViewController(resultController, animated: true, completion: nil)
+		}
 	}
 
 }
