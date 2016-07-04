@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import SafariServices
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SFSafariViewControllerDelegate {
 
 	@IBOutlet var superView: UIView!
 	
@@ -149,7 +150,7 @@ class ViewController: UIViewController {
 		view.clipsToBounds = true
 		
 		view.backgroundColor = color
-		view.tag = tag + 100
+		view.tag = tag + 100 //view tags are 100, 101, 102 etc.
 		view.layer.cornerRadius = 8
 		
 		
@@ -209,7 +210,7 @@ class ViewController: UIViewController {
 		let label = UILabel()
 		label.text = text
 		label.textColor = UIColor(red: 17.0 / 255, green: 76.0 / 255, blue: 105.0 / 255, alpha: 1.0)
-		label.tag = tag + 1000
+		label.tag = tag + 1000 //label tags are 1000, 1001, 1002 etc.
 		
 		view.addSubview(label)
 		
@@ -235,6 +236,32 @@ class ViewController: UIViewController {
 		
 		label.numberOfLines = 0
 		label.lineBreakMode = .ByWordWrapping
+		
+		label.userInteractionEnabled = true
+		
+		let tap = UITapGestureRecognizer(target: self, action: #selector(openWebPage))
+		
+		label.addGestureRecognizer(tap)
+		
+		//label.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
+	}
+	
+	func openWebPage(sender: UITapGestureRecognizer) {
+		
+		let label: UILabel = sender.view as! UILabel
+		
+		let tag = label.tag - 1000
+		
+		if let urlString = eventSet?[tag].urlString, let url = NSURL(string: urlString) {
+			
+			let webVC = SFSafariViewController(URL: url)
+			webVC.delegate = self
+			self.presentViewController(webVC, animated: true, completion: nil)
+		} else {
+			
+			//show no web page available messageBox
+			print("no web-page availavle")
+		}
 	}
 	
 	func addButton(toView parentView: UIView, normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
@@ -258,6 +285,8 @@ class ViewController: UIViewController {
 		button.tag = buttonTag
 		
 		button.addTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
+		
+		
 		
 		buttonTag += 1
 		
@@ -421,6 +450,10 @@ class ViewController: UIViewController {
 		button.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
 		
 		button.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
+	}
+	
+	func safariViewControllerDidFinish(controller: SFSafariViewController) {
+		controller.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
 }
