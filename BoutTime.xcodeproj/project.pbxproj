@@ -13,6 +13,8 @@
 		2C074AE11D26799B00EEF3AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C074AE01D26799B00EEF3AE /* Assets.xcassets */; };
 		2C074AE41D26799B00EEF3AE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C074AE21D26799B00EEF3AE /* LaunchScreen.storyboard */; };
 		2C074AED1D267C4A00EEF3AE /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C074AEC1D267C4A00EEF3AE /* HistoryModel.swift */; };
+		2C7BDFBE1D2ADEF2002687E9 /* IncorrectBuzz.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2C7BDFBD1D2ADEF2002687E9 /* IncorrectBuzz.wav */; };
+		2C7BDFC01D2ADF24002687E9 /* CorrectDing.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2C7BDFBF1D2ADF24002687E9 /* CorrectDing.wav */; };
 		2CAECA201D29455A006AD2C5 /* TimeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAECA1F1D29455A006AD2C5 /* TimeConverter.swift */; };
 		2CAECA221D2975D6006AD2C5 /* GameOverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAECA211D2975D6006AD2C5 /* GameOverController.swift */; };
 /* End PBXBuildFile section */
@@ -27,6 +29,8 @@
 		2C074AE51D26799B00EEF3AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C074AEB1D267BF100EEF3AE /* BoutTimeSandBox.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = BoutTimeSandBox.playground; sourceTree = "<group>"; };
 		2C074AEC1D267C4A00EEF3AE /* HistoryModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
+		2C7BDFBD1D2ADEF2002687E9 /* IncorrectBuzz.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = IncorrectBuzz.wav; sourceTree = "<group>"; };
+		2C7BDFBF1D2ADF24002687E9 /* CorrectDing.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = CorrectDing.wav; sourceTree = "<group>"; };
 		2CAECA1F1D29455A006AD2C5 /* TimeConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeConverter.swift; sourceTree = "<group>"; };
 		2CAECA211D2975D6006AD2C5 /* GameOverController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,6 +66,8 @@
 		2C074AD81D26799B00EEF3AE /* BoutTime */ = {
 			isa = PBXGroup;
 			children = (
+				2C7BDFBF1D2ADF24002687E9 /* CorrectDing.wav */,
+				2C7BDFBD1D2ADEF2002687E9 /* IncorrectBuzz.wav */,
 				2C074AD91D26799B00EEF3AE /* AppDelegate.swift */,
 				2C074ADB1D26799B00EEF3AE /* ViewController.swift */,
 				2C074ADD1D26799B00EEF3AE /* Main.storyboard */,
@@ -133,7 +139,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C7BDFC01D2ADF24002687E9 /* CorrectDing.wav in Resources */,
 				2C074AE41D26799B00EEF3AE /* LaunchScreen.storyboard in Resources */,
+				2C7BDFBE1D2ADEF2002687E9 /* IncorrectBuzz.wav in Resources */,
 				2C074AE11D26799B00EEF3AE /* Assets.xcassets in Resources */,
 				2C074ADF1D26799B00EEF3AE /* Main.storyboard in Resources */,
 			);

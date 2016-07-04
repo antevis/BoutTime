@@ -8,6 +8,7 @@
 
 import UIKit
 import SafariServices
+import AudioToolbox
 
 class ViewController: UIViewController, SFSafariViewControllerDelegate {
 
@@ -27,11 +28,13 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var buttonTag: Int = 0
 	
 	var timer = NSTimer()
-	var seconds: Int = 60
+	var seconds: Int = 20
 	var score: Int = 0
 	var round: Int = 0
 	let maxRounds: Int = 6
 	var roundInProgress: Bool = false
+	
+	var gameSound: SystemSoundID = 0
 	
 	enum arrowFileNames: String {
 		
@@ -57,6 +60,16 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
+	
+	func soundUrlFor(file fileName: String, ofType: String) -> NSURL {
+		
+		let pathToSoundFile = NSBundle.mainBundle().pathForResource(fileName, ofType: ofType)
+		return NSURL(fileURLWithPath: pathToSoundFile!)
+	}
+	
+	func loadCorrectSound() { AudioServicesCreateSystemSoundID(soundUrlFor(file: "CorrectDing", ofType: "wav"), &gameSound) }
+	func loadIncorrectSound() { AudioServicesCreateSystemSoundID(soundUrlFor(file: "IncorrectBuzz", ofType: "wav"), &gameSound) }
+	func playSound(){ AudioServicesPlaySystemSound(gameSound) }
 
 	func newRound() {
 		
@@ -77,7 +90,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			timer.invalidate()
 			
-			seconds = 60
+			seconds = 20
 			timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
 			timerlabel.hidden = false
 			
@@ -312,6 +325,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		
 		roundInProgress = false
 		
+		timer.invalidate()
+		
 		timerlabel.hidden = true
 		
 		if let historyEventSet = historyEventSet {
@@ -324,11 +339,15 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 				
 				image = UIImage(named: "next_round_success")
 				
+				loadCorrectSound()
+				
 				score += 1
 				
 			} else {
 				
 				image = UIImage(named: "next_round_fail")
+				
+				loadIncorrectSound()
 			}
 			
 			let buttTuple = buttonTuple(image, highlightedStateImage: image)
@@ -342,6 +361,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			//Ugly, but still have no idea how to pass action as parameter
 			buttTuple.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
 			buttTuple.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
+			
+			playSound()
 		
 		} else {
 			
