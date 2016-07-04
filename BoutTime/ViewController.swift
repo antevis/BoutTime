@@ -18,7 +18,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	@IBOutlet weak var infoLabel: UILabel!
 	@IBOutlet weak var contrainerView: UIView!
 	
-	
 	var eventsPerRound: Int = 4
 	
 	let history = HistoryModel()
@@ -31,7 +30,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var seconds: Int = 60
 	var score: Int = 0
 	var round: Int = 0
-	let maxRounds: Int = 2
+	let maxRounds: Int = 6
 	var roundInProgress: Bool = false
 	
 	enum arrowFileNames: String {
@@ -62,10 +61,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	func newRound() {
 		
 		if round == maxRounds {
-			
-			//gameover
-			
-			print("gameover: \(score):\(maxRounds)")
 			
 			if let resultController = storyboard?.instantiateViewControllerWithIdentifier("gameOverController") as? GameOverController {
 				
@@ -106,14 +101,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		
 		if seconds == 0 {
 			
-			if let eventSet = eventSet {
-				
-				checkRoundResluts(eventSet)
-			} else {
-				
-				//just trying again
-				newRound()
-			}
+			checkRoundResluts(eventSet)
 		}
 	}
 	
@@ -129,20 +117,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		}
 	}
 	
-	func addButtonTo(stack stackView: UIStackView, text: String, tag: Int, color: UIColor) {
-		
-		let button = UIButton()
-		button.backgroundColor = color
-		button.setTitle(text, forState: .Normal)
-		button.titleLabel?.textAlignment = .Center
-		button.titleLabel?.lineBreakMode = .ByWordWrapping
-		
-		
-		button.tag = tag
-		
-		stackView.addArrangedSubview(button)
-	}
-	
 	func addViewTo(stack stackView: UIStackView, text: String, color: UIColor, tag: Int) {
 		
 		let view = UIView()
@@ -150,17 +124,12 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		view.clipsToBounds = true
 		
 		view.backgroundColor = color
-		view.tag = tag + 100 //view tags are 100, 101, 102 etc.
+		view.tag = tag + 100 //views tags are 100, 101, 102 etc., to distinguish them later
 		view.layer.cornerRadius = 8
 		
-		
-		let insets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-		
-		view.layoutMargins = insets
+		view.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)//insets
 		
 		stackView.addArrangedSubview(view)
-		
-		let marginGuide = view.layoutMarginsGuide
 		
 		//for clarity
 		let zeroTag = 0
@@ -175,12 +144,14 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			let normalStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFull.rawValue) : UIImage(named: arrowFileNames.upFull.rawValue)
 			let hStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFullSelected.rawValue) : UIImage(named: arrowFileNames.upFullSelected.rawValue)
 			
-			let buttonTuple = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
 			
-			button = buttonTuple.button
+			button = buttTuple.button
 			
-			//One of the rare cases when force-unwrapping justified IMHO
-			setConstraintsForFull(button!, relativeTo: view, ratio: buttonTuple.ratio)
+			//Justified force-unwrapping
+			view.addSubview(button!)
+			
+			setConstraintsForFull(button!, relativeTo: view, ratio: buttTuple.ratio)
 			
 		
 		//all inner tiles
@@ -191,9 +162,12 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			var normalStateImage = UIImage(named: arrowFileNames.upHalf.rawValue)
 			var hStateImage = UIImage(named: arrowFileNames.upHalfSelected.rawValue)
 			
-			let buttonUpTuple = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttonUpTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
 			
 			button = buttonUpTuple.button
+			
+			//Justified force-unwrapping
+			view.addSubview(button!)
 			
 			setConstraintsForUpperHalf(button!, relativeTo: view, ratio: buttonUpTuple.ratio)
 			
@@ -201,70 +175,50 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			normalStateImage = UIImage(named: arrowFileNames.downHalf.rawValue)
 			hStateImage = UIImage(named: arrowFileNames.downHalfSelected.rawValue)
 			
-			let buttonDown = addButton(toView: view, normalStateImage: normalStateImage, highlightedStateImage: hStateImage)
+			let buttonDownTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
 			
-			setConstraintsForLowerHalf(buttonDown.button, relativeTo: view, ratio: buttonDown.ratio)
+			view.addSubview(buttonDownTuple.button)
+			
+			setConstraintsForLowerHalf(buttonDownTuple.button, relativeTo: view, ratio: buttonDownTuple.ratio)
 		}
 		
 		//=====Label
 		let label = UILabel()
 		label.text = text
 		label.textColor = UIColor(red: 17.0 / 255, green: 76.0 / 255, blue: 105.0 / 255, alpha: 1.0)
-		label.tag = tag + 1000 //label tags are 1000, 1001, 1002 etc.
+		label.tag = tag + 1000 //label tags are 1000, 1001, 1002 etc., to distinguish them later
 		
 		view.addSubview(label)
 		
-		label.translatesAutoresizingMaskIntoConstraints = false
+		setConstraintsForLabel(label, relativeTo: view, secondaryAnchorProvider: button)
 		
-		label.leadingAnchor.constraintEqualToAnchor(marginGuide.leadingAnchor, constant: 20).active = true
-		label.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
-		label.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 20).active = true
-		label.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: -20).active = true
-		
-		var trailingAnchor: NSLayoutXAxisAnchor
-		
-		if let button = button {
-			
-			trailingAnchor = button.leadingAnchor
-			
-		} else {
-			
-			trailingAnchor = view.trailingAnchor
-		}
-		
-		label.trailingAnchor.constraintEqualToAnchor(trailingAnchor, constant: -20).active = true
-		
-		label.numberOfLines = 0
-		label.lineBreakMode = .ByWordWrapping
-		
+		//add interaction to the label
 		label.userInteractionEnabled = true
-		
-		let tap = UITapGestureRecognizer(target: self, action: #selector(openWebPage))
-		
-		label.addGestureRecognizer(tap)
-		
-		//label.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
+		label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWebPage)))
 	}
+	
 	
 	func openWebPage(sender: UITapGestureRecognizer) {
 		
 		let label: UILabel = sender.view as! UILabel
 		
-		let tag = label.tag - 1000
+		let tag = label.tag - 1000 //unparsing tag from label tag. Now it is 0,1,2,3 etc.
 		
 		if let urlString = eventSet?[tag].urlString, let url = NSURL(string: urlString) {
 			
 			let webVC = SFSafariViewController(URL: url)
 			webVC.delegate = self
 			self.presentViewController(webVC, animated: true, completion: nil)
+
 		} else {
 			
-			//show no web page available messageBox
-			print("no web-page availavle")
+			let controller = UIAlertController(title: nil, message: "No web-page available", preferredStyle: .Alert)
+			controller.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+			presentViewController(controller, animated: true, completion: nil)
 		}
 	}
 	
-	func addButton(toView parentView: UIView, normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
+	func buttonTuple(normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
 		
 		var ratio: CGFloat = 1.0
 		
@@ -286,11 +240,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		
 		button.addTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
 		
-		
-		
 		buttonTag += 1
-		
-		parentView.addSubview(button)
 		
 		return (button: button, ratio: ratio)
 	}
@@ -332,6 +282,79 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		}
 	}
 	
+	func addEventTiles(eventSet: [HistoryEvent]?) {
+		
+		buttonTag = 0
+		
+		guard let eventSet = eventSet where eventSet.count > 0 else {
+			
+			addViewTo(stack: eventStack, text: "No events found. Shake to try again", color: UIColor(red: 204.0 / 255, green: 102.0 / 255, blue: 1.0, alpha: 1.0), tag: 404)
+			
+			return
+		}
+		
+		for i in 0..<eventSet.count {
+			
+			addViewTo(stack: eventStack, text: eventSet[i].event, color: UIColor.whiteColor(), tag: i)
+		}
+	}
+	
+	override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
+		
+		if motion == .MotionShake && roundInProgress {
+			
+			checkRoundResluts(eventSet)
+		}
+	}
+	
+	
+	func checkRoundResluts(historyEventSet: [HistoryEvent]?) {
+		
+		roundInProgress = false
+		
+		timerlabel.hidden = true
+		
+		if let historyEventSet = historyEventSet {
+		
+			let sortedSet = historyEventSet.sort()
+			
+			var image: UIImage?
+			
+			if sortedSet == historyEventSet {
+				
+				image = UIImage(named: "next_round_success")
+				
+				score += 1
+				
+			} else {
+				
+				image = UIImage(named: "next_round_fail")
+			}
+			
+			let buttTuple = buttonTuple(image, highlightedStateImage: image)
+			
+			contrainerView.addSubview(buttTuple.button)
+			
+			setContstraintsForNextRoundButton(buttTuple.button, relativeTo: contrainerView, ratio: buttTuple.ratio)
+			
+			infoLabel.text = "Tap events to learm more"
+			
+			//Ugly, but still have no idea how to pass action as parameter
+			buttTuple.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
+			buttTuple.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
+		
+		} else {
+			
+			//just try again. Although this should never happen
+			newRound()
+		}
+	}
+	
+	func safariViewControllerDidFinish(controller: SFSafariViewController) {
+		controller.dismissViewControllerAnimated(true, completion: nil)
+	}
+	
+	//MARK: Constraints
 	func setConstraintsForFull(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
 		
 		let marginGuide = parentView.layoutMarginsGuide
@@ -343,6 +366,46 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		button.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
 		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor).active = true
 		button.widthAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: ratio).active = true
+	}
+	
+	func setContstraintsForNextRoundButton(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
+		
+		let marginGuide = contrainerView.layoutMarginsGuide
+		
+		button.translatesAutoresizingMaskIntoConstraints = false
+		
+		button.centerXAnchor.constraintEqualToAnchor(marginGuide.centerXAnchor).active = true
+		button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 8).active = true
+		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, constant: 0).active = true
+		button.widthAnchor.constraintEqualToAnchor(button.heightAnchor, multiplier: ratio).active = true
+	}
+	
+	func setConstraintsForLabel(label: UILabel, relativeTo parentView: UIView, secondaryAnchorProvider: UIView?) {
+		
+		let marginGuide = parentView.layoutMarginsGuide
+		
+		label.translatesAutoresizingMaskIntoConstraints = false
+		
+		var trailingAnchor: NSLayoutXAxisAnchor
+		
+		if let button = secondaryAnchorProvider {
+			
+			trailingAnchor = button.leadingAnchor
+			
+		} else {
+			
+			trailingAnchor = view.trailingAnchor
+		}
+		
+		label.leadingAnchor.constraintEqualToAnchor(marginGuide.leadingAnchor, constant: 20).active = true
+		label.centerYAnchor.constraintEqualToAnchor(marginGuide.centerYAnchor).active = true
+		label.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 20).active = true
+		label.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: -20).active = true
+		label.trailingAnchor.constraintEqualToAnchor(trailingAnchor, constant: -20).active = true
+		
+		label.numberOfLines = 0
+		label.lineBreakMode = .ByWordWrapping
+		
 	}
 	
 	func  setConstraintsForUpperHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
@@ -370,90 +433,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		button.trailingAnchor.constraintEqualToAnchor(marginGuide.trailingAnchor,constant: 0).active = true
 		button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, multiplier: 0.5, constant: 0).active = true
 		button.widthAnchor.constraintEqualToAnchor(button.heightAnchor, multiplier: ratio).active = true
-	}
-
-	
-	func addEventTiles(eventSet: [HistoryEvent]?) {
-		
-		buttonTag = 0
-		
-		guard let eventSet = eventSet where eventSet.count > 0 else {
-			
-			addViewTo(stack: eventStack, text: "No events found. Shake to try again", color: UIColor(red: 204.0 / 255, green: 102.0 / 255, blue: 1.0, alpha: 1.0), tag: 404)
-			
-			return
-		}
-		
-		for i in 0..<eventSet.count {
-			
-			addViewTo(stack: eventStack, text: eventSet[i].event, color: UIColor.whiteColor(), tag: i)
-		}
-	}
-	
-	override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
-		
-		if motion == .MotionShake && roundInProgress {
-			
-			//newRound()
-			
-			if let eventSet = eventSet {
-			
-				checkRoundResluts(eventSet)
-			} else {
-				
-				//just trying again
-				newRound()
-			}
-		}
-	}
-	
-	func checkRoundResluts(historyEventSet: [HistoryEvent]) {
-		
-		roundInProgress = false
-		
-		let sortedSet = historyEventSet.sort()
-		
-		timerlabel.hidden = true
-		
-		var image: UIImage?
-		
-		if sortedSet == historyEventSet {
-			
-			image = UIImage(named: "next_round_success")
-			
-			score += 1
-			
-		} else {
-			
-			image = UIImage(named: "next_round_fail")
-		}
-		
-		let button = addButton(toView: contrainerView, normalStateImage: image, highlightedStateImage: image)
-		
-		let ratio = button.ratio
-		
-		let marginGuide = contrainerView.layoutMarginsGuide
-		
-		button.button.translatesAutoresizingMaskIntoConstraints = false
-		
-		button.button.centerXAnchor.constraintEqualToAnchor(marginGuide.centerXAnchor).active = true
-		button.button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 8).active = true
-		button.button.heightAnchor.constraintEqualToAnchor(marginGuide.heightAnchor, constant: 0).active = true
-		button.button.widthAnchor.constraintEqualToAnchor(button.button.heightAnchor, multiplier: ratio).active = true
-		
-		//button.button.hidden = false
-		
-		view.bringSubviewToFront(button.button)
-		
-		infoLabel.text = "Tap events to learm more"
-		
-		button.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
-		
-		button.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
-	}
-	
-	func safariViewControllerDidFinish(controller: SFSafariViewController) {
-		controller.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
 }
