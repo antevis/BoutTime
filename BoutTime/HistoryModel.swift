@@ -41,7 +41,7 @@ struct HistoryModel {
 			HistoryEvent(year: 1900, event: "1900 - rthbvdhg sddds stghgfdf tyhgfdthbvdgfdf xxx", infoUrl: "https://www.google.com"),
 			HistoryEvent(year: 2014, event: "2014 - Putin annexed Crimea and invaded Ukraine xxx", infoUrl: "https://www.google.com"),
 			HistoryEvent(year: 1902, event: "1902 - rthbvdh gfdsghgd sertghgfdf dfcxd dfdfdfdf xxx", infoUrl: "https://www.google.com"),
-			HistoryEvent(year: 1903, event: "1903 - rthbvdhgfd sghgdse rtghgfdf sdfdf sddsds sds xxx", infoUrl: "https://www.google.com"),
+			HistoryEvent(year: 1903, event: "1903 - rthbvdhgfd sghgdse rtghgfdf sdfdf sddsds sds xxx", infoUrl: nil),
 			HistoryEvent(year: 1904, event: "1904 - rthbv dhgfds ghgdsert ghgfdf sdsdsdsdsdsd xxx", infoUrl: "https://www.google.com"),
 			HistoryEvent(year: 1969, event: "1969 - 1st Mission to the Moon sdcsdfsdfaas sss xxx", infoUrl: "https://www.google.com"),
 			HistoryEvent(year: 1999, event: "1999 - Euro currency xcdfdfdfa sds sssds sdsds xxx", infoUrl: "https://www.google.com"),
