@@ -13,7 +13,7 @@ import AudioToolbox
 class ViewController: UIViewController, SFSafariViewControllerDelegate {
 
 	@IBOutlet var superView: UIView!
-	
+
 	@IBOutlet weak var eventStack: UIStackView!
 	@IBOutlet weak var timerlabel: UILabel!
 	@IBOutlet weak var infoLabel: UILabel!
@@ -28,7 +28,10 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var buttonTag: Int = 0
 	
 	var timer = NSTimer()
-	var seconds: Int = 20
+	
+	let roundDuration = 60
+	
+	var seconds: Int = 60
 	var score: Int = 0
 	var round: Int = 0
 	let maxRounds: Int = 6
@@ -48,6 +51,11 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		case upHalfSelected = "up_half_selected"
 	}
 	
+	enum HalfButton {
+		case upper
+		case lower
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
@@ -60,26 +68,17 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
-	
-	func soundUrlFor(file fileName: String, ofType: String) -> NSURL {
-		
-		let pathToSoundFile = NSBundle.mainBundle().pathForResource(fileName, ofType: ofType)
-		return NSURL(fileURLWithPath: pathToSoundFile!)
-	}
-	
-	func loadCorrectSound() { AudioServicesCreateSystemSoundID(soundUrlFor(file: "CorrectDing", ofType: "wav"), &gameSound) }
-	func loadIncorrectSound() { AudioServicesCreateSystemSoundID(soundUrlFor(file: "IncorrectBuzz", ofType: "wav"), &gameSound) }
-	func playSound(){ AudioServicesPlaySystemSound(gameSound) }
 
 	func newRound() {
 		
 		if round == maxRounds {
 			
-			if let resultController = storyboard?.instantiateViewControllerWithIdentifier("gameOverController") as? GameOverController {
+			//game over
+			if let gameOverController = storyboard?.instantiateViewControllerWithIdentifier("gameOverController") as? GameOverController {
 				
-				presentViewController(resultController, animated: true, completion: nil)
+				presentViewController(gameOverController, animated: true, completion: nil)
 				
-				resultController.gameOverLabel.text = "\(score)/\(maxRounds)"
+				gameOverController.gameOverLabel.text = "\(score)/\(maxRounds)"
 			}
 			
 		} else {
@@ -90,8 +89,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			timer.invalidate()
 			
-			seconds = 20
-			timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
+			seconds = roundDuration
+			timerlabel.text = TimeConverter.timeStringfrom(seconds)
 			timerlabel.hidden = false
 			
 			removeViews(ofType: UIView.self, from: eventStack)
@@ -110,7 +109,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	func decreaseTimer() {
 		
 		seconds -= 1
-		timerlabel.text = TimeConverter.timeStringfrom(seconds: seconds)
+		timerlabel.text = TimeConverter.timeStringfrom(seconds)
 		
 		if seconds == 0 {
 			
@@ -130,19 +129,18 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		}
 	}
 	
+	//Adds event tile with label and button(s) to the stackView
 	func addViewTo(stack stackView: UIStackView, text: String, color: UIColor, tag: Int) {
 		
-		let view = UIView()
+		let tile = UIView()
 		
-		view.clipsToBounds = true
+		tile.clipsToBounds = true
 		
-		view.backgroundColor = color
-		view.tag = tag + 100 //views tags are 100, 101, 102 etc., to distinguish them later
-		view.layer.cornerRadius = 8
+		tile.backgroundColor = color
+		tile.tag = tag + 100 //views tags are 100, 101, 102 etc., to distinguish them later
+		tile.layer.cornerRadius = 8
 		
-		view.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)//insets
-		
-		stackView.addArrangedSubview(view)
+		tile.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)//insets
 		
 		//for clarity
 		let zeroTag = 0
@@ -151,65 +149,73 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		//referernce to the button (at least one) needed to apply trailing constraint to the label later
 		var button: UIButton?
 		
-		//first tile
+		var normalStateImage: UIImage?
+		var hStateImage: UIImage?
+		
+		//first or last tiles:
 		if tag == zeroTag || tag == lastTag {
 			
-			let normalStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFull.rawValue) : UIImage(named: arrowFileNames.upFull.rawValue)
-			let hStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFullSelected.rawValue) : UIImage(named: arrowFileNames.upFullSelected.rawValue)
+			normalStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFull.rawValue) : UIImage(named: arrowFileNames.upFull.rawValue)
+			hStateImage = (tag == zeroTag) ? UIImage(named: arrowFileNames.downFullSelected.rawValue) : UIImage(named: arrowFileNames.upFullSelected.rawValue)
 			
 			let buttTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
+
+			tile.addSubview(buttTuple.button)
 			
+			setConstraintsForFull(buttTuple.button, relativeTo: tile, ratio: buttTuple.ratio)
+			
+			//keeping the reference for label trailing constraint
 			button = buttTuple.button
-			
-			//Justified force-unwrapping
-			view.addSubview(button!)
-			
-			setConstraintsForFull(button!, relativeTo: view, ratio: buttTuple.ratio)
 			
 		
 		//all inner tiles
 		} else if tag < lastTag {
 			
 			//add 2 buttons:
-			//I
-			var normalStateImage = UIImage(named: arrowFileNames.upHalf.rawValue)
-			var hStateImage = UIImage(named: arrowFileNames.upHalfSelected.rawValue)
+			//=======|/\|=======
+			normalStateImage = UIImage(named: arrowFileNames.upHalf.rawValue)
+			hStateImage = UIImage(named: arrowFileNames.upHalfSelected.rawValue)
 			
-			let buttonUpTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
+			let buttonUp = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
 			
-			button = buttonUpTuple.button
-			
-			//Justified force-unwrapping
-			view.addSubview(button!)
-			
-			setConstraintsForUpperHalf(button!, relativeTo: view, ratio: buttonUpTuple.ratio)
-			
-			//II
+			//=======|\/|=======
 			normalStateImage = UIImage(named: arrowFileNames.downHalf.rawValue)
 			hStateImage = UIImage(named: arrowFileNames.downHalfSelected.rawValue)
 			
-			let buttonDownTuple = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
+			let buttonDown = buttonTuple(normalStateImage, highlightedStateImage: hStateImage)
 			
-			view.addSubview(buttonDownTuple.button)
+			tile.addSubview(buttonUp.button)
+			tile.addSubview(buttonDown.button)
 			
-			setConstraintsForLowerHalf(buttonDownTuple.button, relativeTo: view, ratio: buttonDownTuple.ratio)
+			setConstraintsForHalf(buttonUp.button, relativeTo: tile, ratio: buttonUp.ratio, buttonHalf: .upper)
+			setConstraintsForHalf(buttonDown.button, relativeTo: tile, ratio: buttonDown.ratio, buttonHalf: .lower)
+			
+			//keeping the reference for label trailing constraint
+			button = buttonUp.button
 		}
 		
-		//=====Label
+		addEventLabelTo(eventView: tile, text: text, tag: tag, secondaryAnchorProvider: button)
+		
+		stackView.addArrangedSubview(tile)
+	}
+	
+	
+	
+	func addEventLabelTo(eventView tile: UIView, text: String, tag: Int, secondaryAnchorProvider: UIView?){
+		
 		let label = UILabel()
 		label.text = text
 		label.textColor = UIColor(red: 17.0 / 255, green: 76.0 / 255, blue: 105.0 / 255, alpha: 1.0)
 		label.tag = tag + 1000 //label tags are 1000, 1001, 1002 etc., to distinguish them later
 		
-		view.addSubview(label)
+		tile.addSubview(label)
 		
-		setConstraintsForLabel(label, relativeTo: view, secondaryAnchorProvider: button)
+		setConstraintsForLabel(label, relativeTo: tile, secondaryAnchorProvider: secondaryAnchorProvider)
 		
 		//add interaction to the label
 		label.userInteractionEnabled = true
 		label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWebPage)))
 	}
-	
 	
 	func openWebPage(sender: UITapGestureRecognizer) {
 		
@@ -260,19 +266,32 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	func swapElements(sender: UIButton!) {
 		
+		//Indexes of 'lhs' and 'rhs' elements being determined according to the following logic:
+		//
+		//		tag 0 (\/): lhs 0, rhs 1
+		//
+		//		tag 1 (/\): lhs 1, rhs 0
+		//		tag 2 (\/): lhs 1, rhs 2
+		//
+		//		tag 3 (/\): lhs 2, rhs 1
+		//		tag 4 (\/): lhs 2, rhs 3
+		//
+		//		tag 5 (/\): lhs 3, rhs 2
+		//
+		//For swapping, it doesn't matter which of two elements is left and which is right,
+		//thus, one can be considered as always equals to (tag: Int) / 2; and another always equals to that + 1
+		//It is important that tag being divided by 2 as Integer.
+		
 		let lhs = sender.tag / 2
 		let rhs = lhs + 1
 		
+		//Unable to use optional binding here
 		if eventSet != nil {
 			
 			swap(&eventSet![lhs], &eventSet![rhs])
 			
-			let swappees: [Int] = [lhs, rhs]
-			
-			for swappee in swappees {
-				
-				reAssignLabelText(swappee)
-			}
+			reAssignLabelText(lhs)
+			reAssignLabelText(rhs)
 		}
 	}
 	
@@ -312,6 +331,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		}
 	}
 	
+	//handling shake gesture
 	override func motionEnded(motion: UIEventSubtype, withEvent event: UIEvent?) {
 		
 		if motion == .MotionShake && roundInProgress {
@@ -373,6 +393,28 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	func safariViewControllerDidFinish(controller: SFSafariViewController) {
 		controller.dismissViewControllerAnimated(true, completion: nil)
+	}
+	
+	//MARK: Audioservices
+	func loadCorrectSound() {
+		
+		AudioServicesCreateSystemSoundID(soundUrlFor(file: "CorrectDing", ofType: "wav"), &gameSound)
+	}
+	
+	func loadIncorrectSound() {
+		
+		AudioServicesCreateSystemSoundID(soundUrlFor(file: "IncorrectBuzz", ofType: "wav"), &gameSound)
+	}
+	
+	func playSound(){
+		
+		AudioServicesPlaySystemSound(gameSound)
+	}
+	
+	func soundUrlFor(file fileName: String, ofType: String) -> NSURL {
+		
+		let pathToSoundFile = NSBundle.mainBundle().pathForResource(fileName, ofType: ofType)
+		return NSURL(fileURLWithPath: pathToSoundFile!)
 	}
 	
 	//MARK: Constraints
@@ -445,6 +487,23 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		setCommonHalfButtonConstraints(button, relativeTo: parentView, ratio: ratio, marginGuide: marginGuide)
 		
 		button.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: 0).active = true
+	}
+	
+	func  setConstraintsForHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat, buttonHalf: HalfButton) {
+		
+		let marginGuide = parentView.layoutMarginsGuide
+		
+		setCommonHalfButtonConstraints(button, relativeTo: parentView, ratio: ratio, marginGuide: marginGuide)
+		
+		switch buttonHalf {
+			
+			case .lower:
+				button.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: 0).active = true
+			case .upper:
+				button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 0).active = true
+		}
+		
+		
 	}
 	
 	func setCommonHalfButtonConstraints(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat, marginGuide: UILayoutGuide) {

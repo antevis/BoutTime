@@ -12,7 +12,7 @@ class TimeConverter {
 	
 	init(){}
 	
-	static func timeStringfrom(seconds timeInSeconds: Int) -> String {
+	static func timeStringfrom(timeInSeconds: Int) -> String {
 		
 		let minutes: Int = timeInSeconds / 60
 		let seconds: Int = timeInSeconds % 60
