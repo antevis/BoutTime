@@ -378,7 +378,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			infoLabel.text = "Tap events to learm more"
 			
-			//Ugly, but still have no idea how to pass action as parameter
+			//Ugly, but still can't figure out how to pass action as parameter
 			buttTuple.button.removeTarget(self, action: #selector(swapElements), forControlEvents: .TouchUpInside)
 			buttTuple.button.addTarget(self, action: #selector(newRound), forControlEvents: .TouchUpInside)
 			
@@ -469,24 +469,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		label.numberOfLines = 0
 		label.lineBreakMode = .ByWordWrapping
 		
-	}
-	
-	func  setConstraintsForUpperHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
-		
-		let marginGuide = parentView.layoutMarginsGuide
-		
-		setCommonHalfButtonConstraints(button, relativeTo: parentView, ratio: ratio, marginGuide: marginGuide)
-		
-		button.topAnchor.constraintEqualToAnchor(marginGuide.topAnchor, constant: 0).active = true
-	}
-	
-	func  setConstraintsForLowerHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat) {
-		
-		let marginGuide = parentView.layoutMarginsGuide
-		
-		setCommonHalfButtonConstraints(button, relativeTo: parentView, ratio: ratio, marginGuide: marginGuide)
-		
-		button.bottomAnchor.constraintEqualToAnchor(marginGuide.bottomAnchor, constant: 0).active = true
 	}
 	
 	func  setConstraintsForHalf(button: UIButton, relativeTo parentView: UIView, ratio: CGFloat, buttonHalf: HalfButton) {
