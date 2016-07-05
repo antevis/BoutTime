@@ -34,7 +34,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var seconds: Int = 60
 	var score: Int = 0
 	var round: Int = 0
-	let maxRounds: Int = 2
+	let maxRounds: Int = 6
 	var roundInProgress: Bool = false
 	
 	var gameSound: SystemSoundID = 0
