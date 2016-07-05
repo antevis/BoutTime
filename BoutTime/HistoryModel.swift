@@ -62,9 +62,9 @@ struct HistoryModel {
 			HistoryEvent(queueIndex: 19, event: "Homo georgicus", hint: "1.85 - 1.77 Ma", infoUrl: "https://en.wikipedia.org/wiki/Homo_erectus#Homo_erectus_georgicus"),
 			HistoryEvent(queueIndex: 20, event: "Paranthropus robustus", hint: "1.8 - 1.2 Ma", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/paranthropus-robustus"),
 			HistoryEvent(queueIndex: 21, event: "Homo heidelbergensis", hint: "600 - 200 Ma", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-heidelbergensis"),
-			HistoryEvent(queueIndex: 22, event: "Homo floresiensis", hint: "190 - 50 Ka", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-floresiensis"),
-			HistoryEvent(queueIndex: 23, event: "Homo neanderthalensis", hint: "400 - 40 Ka", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-neanderthalensis"),
-			HistoryEvent(queueIndex: 24, event: "Homo helmei", hint: "260 Ka", infoUrl: "https://en.wikipedia.org/wiki/Florisbad_Skull"),
+			HistoryEvent(queueIndex: 22, event: "Homo neanderthalensis", hint: "400 - 40 Ka", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-neanderthalensis"),
+			HistoryEvent(queueIndex: 23, event: "Homo helmei", hint: "260 Ka", infoUrl: "https://en.wikipedia.org/wiki/Florisbad_Skull"),
+			HistoryEvent(queueIndex: 24, event: "Homo floresiensis", hint: "190 - 50 Ka", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-floresiensis"),
 			HistoryEvent(queueIndex: 25, event: "Homo sapiens", hint: "200 Ka - present", infoUrl: "http://humanorigins.si.edu/evidence/human-fossils/species/homo-sapiens"),
 		]
 	

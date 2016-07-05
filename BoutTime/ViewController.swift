@@ -29,12 +29,12 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	var timer = NSTimer()
 	
-	let roundDuration = 60
+	let roundDuration = 20
 	
 	var seconds: Int = 0
 	var score: Int = 0
 	var round: Int = 0
-	let maxRounds: Int = 6
+	let maxRounds: Int = 2
 	var roundInProgress: Bool = false
 	
 	var gameSound: SystemSoundID = 0
@@ -59,10 +59,20 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		// Do any additional setup after loading the view, typically from a nib.
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		
+		let intro = "These are our ancestors - hominids. You task is to put them in order of appearance: older at the top. After about \(roundDuration / 6) seconds you will be given a hint."
+		
+		showAlert(nil, message: intro, style: .Alert, buttonText: "OK", actionStyle: .Default, handler: hideIntro)
+	}
+	
+	func hideIntro(sender: UIAlertAction) {
 		
 		newRound()
 	}
-
+	
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
@@ -82,7 +92,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 		} else {
 			
-			roundInProgress = true
+			
 		
 			round += 1
 			
@@ -91,6 +101,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			seconds = roundDuration
 			timerlabel.text = TimeConverter.timeStringfrom(seconds)
 			timerlabel.hidden = false
+			infoLabel.hidden = false
 			
 			removeViews(ofType: UIView.self, from: eventStack)
 			removeViews(ofType: UIButton.self, from: contrainerView)
@@ -103,7 +114,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			addEventTiles(eventSet)
 			
-			timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(decreaseTimer), userInfo: nil, repeats: true)
+			
 		}
 	}
 	
@@ -292,10 +303,18 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 
 		} else {
 			
-			let controller = UIAlertController(title: nil, message: "No web-page available", preferredStyle: .Alert)
-			controller.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-			presentViewController(controller, animated: true, completion: nil)
+			showAlert(nil, message: "No web-page available", style: .Alert, buttonText: "OK", actionStyle: .Default, handler: nil)
 		}
+	}
+	
+	
+	func showAlert(title: String?, message: String?, style: UIAlertControllerStyle, buttonText: String, actionStyle: UIAlertActionStyle, handler: ((UIAlertAction) -> Void)?) {
+		
+		let controller = UIAlertController(title: title, message: message, preferredStyle: style)
+		controller.addAction(UIAlertAction(title: buttonText, style: actionStyle, handler: hideIntro))
+		
+		presentViewController(controller, animated: true, completion: nil)
+		
 	}
 	
 	func buttonTuple(normalStateImage: UIImage? = nil, highlightedStateImage: UIImage? = nil) -> (button: UIButton, ratio: CGFloat) {
@@ -380,6 +399,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		
 		guard let eventSet = eventSet where eventSet.count > 0 else {
 			
+			timer.invalidate()
+			
 			addViewTo(stack: eventStack, text: "No events found. Shake to try again", color: UIColor(red: 204.0 / 255, green: 102.0 / 255, blue: 1.0, alpha: 1.0), tag: 404)
 			
 			return
@@ -387,8 +408,14 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		
 		for i in 0..<eventSet.count {
 			
+			roundInProgress = true
+			
+			
+			
 			addViewTo(stack: eventStack, text: eventSet[i].event, color: UIColor.whiteColor(), tag: i)
 		}
+		
+		timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(decreaseTimer), userInfo: nil, repeats: true)
 	}
 	
 	//handling shake gesture
@@ -524,7 +551,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 		} else {
 			
-			trailingAnchor = view.trailingAnchor
+			trailingAnchor = parentView.trailingAnchor
 		}
 		
 		label.leadingAnchor.constraintEqualToAnchor(marginGuide.leadingAnchor, constant: 20).active = true
