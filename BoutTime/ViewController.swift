@@ -29,15 +29,17 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	var timer = NSTimer()
 	
-	let roundDuration = 20
+	let roundDuration = 60
 	
 	var seconds: Int = 0
 	var score: Int = 0
 	var round: Int = 0
-	let maxRounds: Int = 2
+	let maxRounds: Int = 6
 	var roundInProgress: Bool = false
 	
 	var gameSound: SystemSoundID = 0
+	
+	var introDisplayed = false
 	
 	enum arrowFileNames: String {
 		
@@ -63,9 +65,14 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	override func viewDidAppear(animated: Bool) {
 		
-		let intro = "These are our ancestors - hominids. You task is to put them in order of appearance: older at the top. After about \(roundDuration / 6) seconds you will be given a hint."
+		if !introDisplayed {
 		
-		showAlert(nil, message: intro, style: .Alert, buttonText: "OK", actionStyle: .Default, handler: hideIntro)
+			let intro = "These are our ancestors - hominids. You task is to put them in order of appearance: older at the top. After about \(roundDuration / 6) seconds you will be given a hint."
+			
+			showAlert(nil, message: intro, style: .Alert, buttonText: "OK", actionStyle: .Default, handler: hideIntro)
+			
+			introDisplayed = true
+		}
 	}
 	
 	func hideIntro(sender: UIAlertAction) {
