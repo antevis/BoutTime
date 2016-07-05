@@ -34,7 +34,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var seconds: Int = 60
 	var score: Int = 0
 	var round: Int = 0
-	let maxRounds: Int = 6
+	let maxRounds: Int = 2
 	var roundInProgress: Bool = false
 	
 	var gameSound: SystemSoundID = 0
@@ -213,8 +213,21 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		setConstraintsForLabel(label, relativeTo: tile, secondaryAnchorProvider: secondaryAnchorProvider)
 		
 		//add interaction to the label
-		label.userInteractionEnabled = true
+		//label.userInteractionEnabled = true
+		userInteractionFor(UILabel.self, within: tile, isEnabled: false)
+		
 		label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openWebPage)))
+	}
+	
+	func userInteractionFor(viewType: UIView.Type, within parentView: UIView, isEnabled: Bool) {
+		
+		for subView in parentView.subviews {
+			
+			if subView.isKindOfClass(viewType) {
+				
+				subView.userInteractionEnabled = isEnabled
+			}
+		}
 	}
 	
 	func openWebPage(sender: UITapGestureRecognizer) {
@@ -344,6 +357,13 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	func checkRoundResluts(historyEventSet: [HistoryEvent]?) {
 		
 		roundInProgress = false
+		
+		
+		//Make labels clickable
+		for subView in eventStack.subviews {
+			
+			userInteractionFor(UILabel.self, within: subView, isEnabled: !roundInProgress)
+		}
 		
 		timer.invalidate()
 		
