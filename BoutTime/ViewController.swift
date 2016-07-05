@@ -21,7 +21,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	var eventsPerRound: Int = 4
 	
-	let history = HistoryModel()
+	var history = HistoryModel()
 	
 	var eventSet: [HistoryEvent]?
 	
@@ -98,6 +98,8 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			infoLabel.text = "Shake to complete"
 			
+			history = HistoryModel()
+			
 			eventSet = history.shuffledEventArrayOf(thisNumberOfEvents: eventsPerRound)
 			
 			addEventTiles(eventSet)
@@ -111,12 +113,54 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		seconds -= 1
 		timerlabel.text = TimeConverter.timeStringfrom(seconds)
 		
+		//display hints in roughly 1/6th of rounnd duration
+		if seconds == Int(Double(roundDuration) * 0.83) {
+			
+			eventSet = eventSetWithHints(eventSet)
+			
+			displayHints(eventSet)
+		}
+		
 		if seconds == 0 {
 			
 			checkRoundResluts(eventSet)
 		}
 	}
 	
+	func displayHints(eventSet: [HistoryEvent]?) {
+		
+		for tile in eventStack.subviews {
+			
+			if tile.isKindOfClass(UIView) {
+				
+				let tag = tile.tag - 100
+				
+				reAssignLabelText(tag, text: eventSet![tag].event )
+			}
+		}
+	}
+	
+	func eventSetWithHints(eventSet: [HistoryEvent]?) -> [HistoryEvent]? {
+		
+		var resultSet: [HistoryEvent]?
+		
+		guard let eventSet = eventSet else {
+			
+			return nil
+		}
+		
+		resultSet = eventSet
+		
+		for eventItem in resultSet! {
+			
+			if let hint = eventItem.hint {
+				
+				eventItem.event += "\r\(hint)"
+			}
+		}
+		
+		return resultSet
+	}
 	
 	func removeViews(ofType viewtype: UIView.Type, from superView: UIView){
 		
@@ -303,27 +347,28 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			
 			swap(&eventSet![lhs], &eventSet![rhs])
 			
-			reAssignLabelText(lhs)
-			reAssignLabelText(rhs)
+			reAssignLabelText(lhs, text: eventSet![lhs].event)
+			reAssignLabelText(rhs, text: eventSet![rhs].event)
 		}
 	}
 	
-	func setTextFor(tag viewTag: Int, labelCandidate view: UIView) {
+	func setTextFor(tag viewTag: Int, labelCandidate view: UIView, text: String) {
 		
 		if view.tag == viewTag + 1000 {
 			
 			if let label = view as? UILabel {
 				
-				label.text = eventSet![viewTag].event
+				label.text = text
+				//eventSet![viewTag].event
 			}
 		}
 	}
 	
-	func reAssignLabelText (tag: Int) {
+	func reAssignLabelText (tag: Int, text: String) {
 		
-		if let upperTile = eventStack.viewWithTag(tag + 100), let labelCandidate = upperTile.viewWithTag(tag + 1000) {
+		if let tile = eventStack.viewWithTag(tag + 100), let labelCandidate = tile.viewWithTag(tag + 1000) {
 			
-			setTextFor(tag: tag, labelCandidate: labelCandidate)
+			setTextFor(tag: tag, labelCandidate: labelCandidate, text: text)
 		}
 	}
 	
