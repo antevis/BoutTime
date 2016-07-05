@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+//just for fun
 class TimeConverter {
 	
 	init(){}

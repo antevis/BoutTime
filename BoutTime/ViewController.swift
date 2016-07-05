@@ -22,7 +22,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	var eventsPerRound: Int = 4
 	
 	var history = HistoryModel()
-	
 	var eventSet: [HistoryEvent]?
 	
 	var buttonTag: Int = 0
