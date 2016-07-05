@@ -31,7 +31,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	let roundDuration = 60
 	
-	var seconds: Int = 60
+	var seconds: Int = 0
 	var score: Int = 0
 	var round: Int = 0
 	let maxRounds: Int = 6
@@ -61,7 +61,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		// Do any additional setup after loading the view, typically from a nib.
 		
 		newRound()
-		
 	}
 
 	override func didReceiveMemoryWarning() {
@@ -129,13 +128,18 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 	
 	func displayHints(eventSet: [HistoryEvent]?) {
 		
+		guard let eventSet = eventSet else {
+			
+			return
+		}
+		
 		for tile in eventStack.subviews {
 			
 			if tile.isKindOfClass(UIView) {
 				
 				let tag = tile.tag - 100
 				
-				reAssignLabelText(tag, text: eventSet![tag].event )
+				reAssignLabelText(tag, text: eventSet[tag].event)
 			}
 		}
 	}
@@ -337,7 +341,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 		//
 		//For swapping, it doesn't matter which of two elements is left and which is right,
 		//thus, one can be considered as always equals to (tag: Int) / 2; and another always equals to that + 1
-		//It is important that tag being divided by 2 as Integer.
 		
 		let lhs = sender.tag / 2
 		let rhs = lhs + 1
@@ -359,7 +362,6 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
 			if let label = view as? UILabel {
 				
 				label.text = text
-				//eventSet![viewTag].event
 			}
 		}
 	}
